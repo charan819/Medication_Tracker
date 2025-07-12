@@ -1,0 +1,252 @@
+{
+  "medications": [
+    {
+      "id": 1,
+      "name": "Lisinopril",
+      "dosage": "10mg",
+      "frequency": "once_daily",
+      "intake_time": "08:00",
+      "special_instructions": "Take with food",
+      "created_at": "2025-03-01T08:00:00",
+      "updated_at": "2025-03-01T08:00:00",
+      "logs": [
+        {
+          "id": 1,
+          "medication_id": 1,
+          "taken_at": "2025-04-22T08:05:00",
+          "status": "taken",
+          "notes": "Felt good after taking"
+        },
+        {
+          "id": 2,
+          "medication_id": 1,
+          "taken_at": "2025-04-23T08:10:00",
+          "status": "taken",
+          "notes": null
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Metformin",
+      "dosage": "500mg",
+      "frequency": "twice_daily",
+      "intake_time": "08:00, 20:00",
+      "special_instructions": "Take with meals",
+      "created_at": "2025-03-10T10:00:00",
+      "updated_at": "2025-03-10T10:00:00",
+      "logs": [
+        {
+          "id": 3,
+          "medication_id": 2,
+          "taken_at": "2025-04-22T08:05:00",
+          "status": "taken",
+          "notes": null
+        },
+        {
+          "id": 4,
+          "medication_id": 2,
+          "taken_at": "2025-04-22T20:15:00",
+          "status": "taken",
+          "notes": null
+        },
+        {
+          "id": 5,
+          "medication_id": 2,
+          "taken_at": "2025-04-23T08:10:00",
+          "status": "taken",
+          "notes": null
+        },
+        {
+          "id": 6,
+          "medication_id": 2,
+          "taken_at": "2025-04-23T20:00:00",
+          "status": "skipped",
+          "notes": "Forgot to take"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Vitamin D",
+      "dosage": "1000 IU",
+      "frequency": "once_daily",
+      "intake_time": "09:00",
+      "special_instructions": "Take with breakfast",
+      "created_at": "2025-04-01T09:00:00",
+      "updated_at": "2025-04-01T09:00:00",
+      "logs": []
+    },
+    {
+      "id": 4,
+      "name": "jumore",
+      "dosage": "1 tab",
+      "frequency": "once_daily",
+      "intake_time": "08:24",
+      "special_instructions": "pilicheee pedavula painaaa",
+      "created_at": "2025-06-30T18:49:41.526454",
+      "updated_at": "2025-06-30T18:49:41.526455",
+      "logs": []
+    }
+  ],
+  "health_metrics": [
+    {
+      "id": 1,
+      "metric_type": "blood_pressure",
+      "value": 120,
+      "unit": "mmHg",
+      "recorded_at": "2025-04-22T08:30:00",
+      "notes": "Morning measurement",
+      "systolic": 120,
+      "diastolic": 80
+    },
+    {
+      "id": 2,
+      "metric_type": "blood_pressure",
+      "value": 122,
+      "unit": "mmHg",
+      "recorded_at": "2025-04-23T08:30:00",
+      "notes": "Morning measurement",
+      "systolic": 122,
+      "diastolic": 82
+    },
+    {
+      "id": 3,
+      "metric_type": "glucose",
+      "value": 105,
+      "unit": "mg/dL",
+      "recorded_at": "2025-04-22T08:35:00",
+      "notes": "Fasting blood sugar",
+      "systolic": null,
+      "diastolic": null
+    },
+    {
+      "id": 4,
+      "metric_type": "weight",
+      "value": 75.5,
+      "unit": "kg",
+      "recorded_at": "2025-04-22T08:40:00",
+      "notes": "Morning weight",
+      "systolic": null,
+      "diastolic": null
+    },
+    {
+      "id": 5,
+      "metric_type": "heart_rate",
+      "value": 68,
+      "unit": "bpm",
+      "recorded_at": "2025-04-22T08:45:00",
+      "notes": "Resting heart rate",
+      "systolic": null,
+      "diastolic": null
+    }
+  ],
+  "appointments": [
+    {
+      "id": 1,
+      "title": "Annual Physical Checkup",
+      "doctor_name": "Dr. Sarah Johnson",
+      "hospital_name": "City General Hospital",
+      "date": "2025-05-15",
+      "time": "10:00",
+      "location": "123 Health Street, Suite 400",
+      "notes": "Bring previous lab results",
+      "status": "scheduled",
+      "created_at": "2025-04-01T10:00:00",
+      "updated_at": "2025-04-01T10:00:00"
+    },
+    {
+      "id": 2,
+      "title": "Dental Cleaning",
+      "doctor_name": "Dr. Michael Brown",
+      "hospital_name": "Smile Dental Clinic",
+      "date": "2025-04-28",
+      "time": "14:30",
+      "location": "456 Dental Avenue",
+      "notes": "Six-month cleaning",
+      "status": "scheduled",
+      "created_at": "2025-04-10T15:00:00",
+      "updated_at": "2025-04-10T15:00:00"
+    },
+    {
+      "id": 3,
+      "title": "Cardiologist Follow-up",
+      "doctor_name": "Dr. Emma Wilson",
+      "hospital_name": "Heart Center",
+      "date": "2025-04-15",
+      "time": "11:15",
+      "location": "789 Cardiac Lane",
+      "notes": "Follow-up for blood pressure",
+      "status": "completed",
+      "created_at": "2025-03-15T11:00:00",
+      "updated_at": "2025-04-15T12:30:00"
+    }
+  ],
+  "reminders": [
+    {
+      "id": 1,
+      "reminder_type": "medication",
+      "target_id": 1,
+      "title": "Take Lisinopril",
+      "message": "It's time to take your blood pressure medication",
+      "reminder_time": "2025-04-24T08:00:00",
+      "repeat_interval": "daily",
+      "is_active": true,
+      "notification_method": "app",
+      "created_at": "2025-04-01T10:00:00",
+      "updated_at": "2025-04-01T10:00:00"
+    },
+    {
+      "id": 2,
+      "reminder_type": "medication",
+      "target_id": 2,
+      "title": "Take Metformin Morning",
+      "message": "It's time to take your morning diabetes medication",
+      "reminder_time": "2025-04-24T08:00:00",
+      "repeat_interval": "daily",
+      "is_active": true,
+      "notification_method": "app",
+      "created_at": "2025-04-01T10:00:00",
+      "updated_at": "2025-04-01T10:00:00"
+    },
+    {
+      "id": 3,
+      "reminder_type": "medication",
+      "target_id": 2,
+      "title": "Take Metformin Evening",
+      "message": "It's time to take your evening diabetes medication",
+      "reminder_time": "2025-04-24T20:00:00",
+      "repeat_interval": "daily",
+      "is_active": true,
+      "notification_method": "app",
+      "created_at": "2025-04-01T10:00:00",
+      "updated_at": "2025-04-01T10:00:00"
+    },
+    {
+      "id": 4,
+      "reminder_type": "appointment",
+      "target_id": 1,
+      "title": "Annual Physical Checkup Tomorrow",
+      "message": "Don't forget your annual checkup with Dr. Sarah Johnson tomorrow at 10:00 AM",
+      "reminder_time": "2025-05-14T18:00:00",
+      "repeat_interval": "once",
+      "is_active": true,
+      "notification_method": "app",
+      "created_at": "2025-04-01T10:00:00",
+      "updated_at": "2025-04-01T10:00:00"
+    },
+    {
+      "id": 5,
+      "reminder_type": "health_check",
+      "target_id": null,
+      "title": "Check Blood Pressure",
+      "message": "It's time to measure your blood pressure",
+      "reminder_time": "2025-04-24T08:30:00",
+      "repeat_interval": "daily",
+      "is_active": true,
+      "notification_method": "app",
+      "created_at": "2025-04-01T10:00:00",
+      "updated_at": "2025-04-01T10:00:00"
+    }
+  ]
+}

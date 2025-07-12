@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  health-tracker-db:
+    image: postgres:15
+    container_name: health-tracker-db
+    environment:
+      POSTGRES_DB: health_tracker
+      POSTGRES_USER: health_user
+      POSTGRES_PASSWORD: health_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - health_tracker_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U health_user -d health_tracker"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  health_tracker_data:

@@ -1,0 +1,509 @@
+{% extends "base.html" %}
+
+{% block title %}Medications - Health Management App{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Your Medications</h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMedicationModal">
+        <i class="fas fa-plus me-1"></i> Add Medication
+    </button>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">Filters</h5>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label for="statusFilter" class="form-label">Status</label>
+                <select class="form-select" id="statusFilter">
+                    <option value="">All</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="discontinued">Discontinued</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="frequencyFilter" class="form-label">Frequency</label>
+                <select class="form-select" id="frequencyFilter">
+                    <option value="">All</option>
+                    <option value="once_daily">Once Daily</option>
+                    <option value="twice_daily">Twice Daily</option>
+                    <option value="three_times_daily">Three Times Daily</option>
+                    <option value="as_needed">As Needed</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-primary w-100" id="applyFilters">Apply Filters</button>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-outline-secondary w-100" id="resetFilters">Reset</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Medications List -->
+<div class="card">
+    <div class="card-body">
+        <div class="loader text-center">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div id="medications-container">
+            <!-- Medications will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Add Medication Modal -->
+<div class="modal fade" id="addMedicationModal" tabindex="-1" aria-labelledby="addMedicationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMedicationModalLabel">Add New Medication</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addMedicationForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">Medication Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="dosage" class="form-label">Dosage</label>
+                            <input type="text" class="form-control" id="dosage" name="dosage" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="frequency" class="form-label">Frequency</label>
+                            <select class="form-select" id="frequency" name="frequency" required>
+                                <option value="" selected disabled>Select frequency</option>
+                                <option value="once_daily">Once Daily</option>
+                                <option value="twice_daily">Twice Daily</option>
+                                <option value="three_times_daily">Three Times Daily</option>
+                                <option value="four_times_daily">Four Times Daily</option>
+                                <option value="as_needed">As Needed</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="intake_time" class="form-label">Intake Time(s)</label>
+                            <input type="text" class="form-control" id="intake_time" name="intake_time" placeholder="e.g. 08:00, 20:00" required>
+                            <small class="form-text text-muted">Use 24-hour format, separate multiple times with commas</small>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="special_instructions" class="form-label">Special Instructions</label>
+                        <textarea class="form-control" id="special_instructions" name="special_instructions" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveMedicationBtn">Save Medication</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Log Medication Modal -->
+<div class="modal fade" id="logMedicationModal" tabindex="-1" aria-labelledby="logMedicationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="logMedicationModalLabel">Log Medication</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="logMedicationForm">
+                    <input type="hidden" id="log_medication_id" name="medication_id">
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="log_status" name="status" required>
+                            <option value="taken" selected>Taken</option>
+                            <option value="skipped">Skipped</option>
+                            <option value="missed">Missed</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="log_notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="log_notes" name="notes" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="taken_at" class="form-label">Time Taken</label>
+                        <input type="datetime-local" class="form-control" id="taken_at" name="taken_at">
+                        <small class="form-text text-muted">Leave blank to use current time</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveLogBtn">Save Log</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Medication Modal -->
+<div class="modal fade" id="editMedicationModal" tabindex="-1" aria-labelledby="editMedicationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editMedicationModalLabel">Edit Medication</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editMedicationForm">
+                    <input type="hidden" id="edit_medication_id">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="edit_name" class="form-label">Medication Name</label>
+                            <input type="text" class="form-control" id="edit_name" name="name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_dosage" class="form-label">Dosage</label>
+                            <input type="text" class="form-control" id="edit_dosage" name="dosage" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="edit_frequency" class="form-label">Frequency</label>
+                            <select class="form-select" id="edit_frequency" name="frequency" required>
+                                <option value="" disabled>Select frequency</option>
+                                <option value="once_daily">Once Daily</option>
+                                <option value="twice_daily">Twice Daily</option>
+                                <option value="three_times_daily">Three Times Daily</option>
+                                <option value="four_times_daily">Four Times Daily</option>
+                                <option value="as_needed">As Needed</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="edit_intake_time" class="form-label">Intake Time(s)</label>
+                            <input type="text" class="form-control" id="edit_intake_time" name="intake_time" placeholder="e.g. 08:00, 20:00" required>
+                            <small class="form-text text-muted">Use 24-hour format, separate multiple times with commas</small>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_special_instructions" class="form-label">Special Instructions</label>
+                        <textarea class="form-control" id="edit_special_instructions" name="special_instructions" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_status" class="form-label">Status</label>
+                        <select class="form-select" id="edit_status" name="status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="discontinued">Discontinued</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="updateMedicationBtn">Update Medication</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        // Load medications on page load
+        await loadMedications();
+        
+        // Set up event listeners
+        document.getElementById('applyFilters').addEventListener('click', loadMedications);
+        document.getElementById('resetFilters').addEventListener('click', resetFilters);
+        document.getElementById('saveMedicationBtn').addEventListener('click', saveMedication);
+        document.getElementById('saveLogBtn').addEventListener('click', saveMedicationLog);
+        document.getElementById('updateMedicationBtn').addEventListener('click', updateMedication);
+    });
+    
+    async function loadMedications() {
+        try {
+            showLoader();
+            
+            // Get filter values
+            const statusFilter = document.getElementById('statusFilter').value;
+            const frequencyFilter = document.getElementById('frequencyFilter').value;
+            
+            // Fetch all medications - since our API doesn't support filtering directly, 
+            // we'll filter client-side for this example
+            const medications = await fetchMedications();
+            
+            // Filter medications
+            let filteredMedications = medications;
+            if (statusFilter) {
+                filteredMedications = filteredMedications.filter(med => med.status === statusFilter);
+            }
+            if (frequencyFilter) {
+                filteredMedications = filteredMedications.filter(med => med.frequency === frequencyFilter);
+            }
+            
+            // Display medications
+            const container = document.getElementById('medications-container');
+            
+            if (filteredMedications.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center p-5">
+                        <h5>No medications found</h5>
+                        <p>Add a medication to get started</p>
+                    </div>
+                `;
+                hideLoader();
+                return;
+            }
+            
+            let html = `
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Name</th>
+                                <th>Dosage</th>
+                                <th>Frequency</th>
+                                <th>Intake Time</th>
+                                <th>Special Instructions</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            filteredMedications.forEach(med => {
+                let statusClass = 'active';
+                if (med.status === 'inactive') statusClass = 'inactive';
+                if (med.status === 'discontinued') statusClass = 'discontinued';
+                
+                let frequencyText = med.frequency.replace(/_/g, ' ');
+                
+                html += `
+                    <tr>
+                        <td><span class="medication-status status-${statusClass}"></span> ${med.status || 'Active'}</td>
+                        <td>${med.name}</td>
+                        <td>${med.dosage}</td>
+                        <td>${frequencyText}</td>
+                        <td>${med.intake_time}</td>
+                        <td>${med.special_instructions || '-'}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-success" onclick="openLogModal(${med.id})">
+                                    Log
+                                </button>
+                                <button type="button" class="btn btn-sm btn-primary" onclick="openEditModal(${med.id})">
+                                    Edit
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger" onclick="deleteMedicationConfirm(${med.id})">
+                                    Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+            hideLoader();
+            
+        } catch (error) {
+            console.error('Error loading medications:', error);
+            showAlert('Failed to load medications. Please try again later.', 'danger');
+            hideLoader();
+        }
+    }
+    
+    function resetFilters() {
+        document.getElementById('statusFilter').value = '';
+        document.getElementById('frequencyFilter').value = '';
+        loadMedications();
+    }
+    
+    async function saveMedication() {
+        const nameEl = document.getElementById('name');
+        const dosageEl = document.getElementById('dosage');
+        const frequencyEl = document.getElementById('frequency');
+        const intakeTimeEl = document.getElementById('intake_time');
+        const specialInstructionsEl = document.getElementById('special_instructions');
+        
+        // Simple validation
+        if (!nameEl.value || !dosageEl.value || !frequencyEl.value || !intakeTimeEl.value) {
+            showAlert('Please fill in all required fields', 'warning');
+            return;
+        }
+        
+        const medicationData = {
+            name: nameEl.value,
+            dosage: dosageEl.value,
+            frequency: frequencyEl.value,
+            intake_time: intakeTimeEl.value,
+            special_instructions: specialInstructionsEl.value,
+            status: 'active'
+        };
+        
+        try {
+            const result = await createMedication(medicationData);
+            if (result) {
+                // Close modal and reset form
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addMedicationModal'));
+                modal.hide();
+                document.getElementById('addMedicationForm').reset();
+                
+                // Reload medications
+                await loadMedications();
+            }
+        } catch (error) {
+            console.error('Error saving medication:', error);
+            showAlert('Failed to save medication. Please try again.', 'danger');
+        }
+    }
+    
+    function openLogModal(medicationId) {
+        document.getElementById('log_medication_id').value = medicationId;
+        
+        // Reset form
+        document.getElementById('log_status').value = 'taken';
+        document.getElementById('log_notes').value = '';
+        document.getElementById('taken_at').value = '';
+        
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('logMedicationModal'));
+        modal.show();
+    }
+    
+    async function saveMedicationLog() {
+        const medicationId = document.getElementById('log_medication_id').value;
+        const status = document.getElementById('log_status').value;
+        const notes = document.getElementById('log_notes').value;
+        const takenAt = document.getElementById('taken_at').value;
+        
+        const logData = {
+            status: status,
+            notes: notes || null
+        };
+        
+        if (takenAt) {
+            logData.taken_at = new Date(takenAt).toISOString();
+        }
+        
+        try {
+            showLoader();
+            const response = await fetch(`/api/medications/${medicationId}/logs`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(logData),
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
+            }
+            
+            hideLoader();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('logMedicationModal'));
+            modal.hide();
+            
+            showAlert('Medication log saved successfully!', 'success');
+            
+            // Reload medications to refresh the list
+            await loadMedications();
+            
+        } catch (error) {
+            hideLoader();
+            console.error('Error saving medication log:', error);
+            showAlert('Failed to save medication log. Please try again.', 'danger');
+        }
+    }
+    
+    async function openEditModal(medicationId) {
+        try {
+            showLoader();
+            const medication = await fetchMedicationById(medicationId);
+            hideLoader();
+            
+            if (!medication) {
+                showAlert('Failed to load medication details', 'danger');
+                return;
+            }
+            
+            // Fill form with medication data
+            document.getElementById('edit_medication_id').value = medication.id;
+            document.getElementById('edit_name').value = medication.name;
+            document.getElementById('edit_dosage').value = medication.dosage;
+            document.getElementById('edit_frequency').value = medication.frequency;
+            document.getElementById('edit_intake_time').value = medication.intake_time;
+            document.getElementById('edit_special_instructions').value = medication.special_instructions || '';
+            document.getElementById('edit_status').value = medication.status || 'active';
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('editMedicationModal'));
+            modal.show();
+            
+        } catch (error) {
+            hideLoader();
+            console.error('Error loading medication details:', error);
+            showAlert('Failed to load medication details. Please try again.', 'danger');
+        }
+    }
+    
+    async function updateMedication() {
+        const medicationId = document.getElementById('edit_medication_id').value;
+        
+        const medicationData = {
+            name: document.getElementById('edit_name').value,
+            dosage: document.getElementById('edit_dosage').value,
+            frequency: document.getElementById('edit_frequency').value,
+            intake_time: document.getElementById('edit_intake_time').value,
+            special_instructions: document.getElementById('edit_special_instructions').value,
+            status: document.getElementById('edit_status').value
+        };
+        
+        try {
+            const result = await updateMedication(medicationId, medicationData);
+            if (result) {
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editMedicationModal'));
+                modal.hide();
+                
+                // Reload medications
+                await loadMedications();
+            }
+        } catch (error) {
+            console.error('Error updating medication:', error);
+            showAlert('Failed to update medication. Please try again.', 'danger');
+        }
+    }
+    
+    async function deleteMedicationConfirm(medicationId) {
+        if (confirm('Are you sure you want to delete this medication? This action cannot be undone.')) {
+            try {
+                const result = await deleteMedication(medicationId);
+                if (result) {
+                    // Reload medications
+                    await loadMedications();
+                }
+            } catch (error) {
+                console.error('Error deleting medication:', error);
+                showAlert('Failed to delete medication. Please try again.', 'danger');
+            }
+        }
+    }
+</script>
+{% endblock %}

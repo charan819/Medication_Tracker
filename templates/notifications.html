@@ -1,0 +1,466 @@
+{% extends "base.html" %}
+
+{% block title %}Notification Settings - Health Management{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>🔔 Notification Settings</h2>
+                <button class="btn btn-outline-primary" onclick="testNotifications()">
+                    <i class="fas fa-paper-plane"></i> Send Test Notification
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Status Cards -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-bell"></i> Browser Push Notifications
+                    </h5>
+                    <p class="card-text">Real-time notifications in your browser for medication and appointment reminders.</p>
+                    <div id="push-status" class="mb-3">
+                        <span class="badge bg-secondary">Checking...</span>
+                    </div>
+                    <button id="enable-push-btn" class="btn btn-primary" onclick="enablePushNotifications()" style="display: none;">
+                        Enable Push Notifications
+                    </button>
+                    <div id="push-enabled" style="display: none;">
+                        <span class="text-success">
+                            <i class="fas fa-check-circle"></i> Push notifications enabled
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-envelope"></i> Email Notifications
+                    </h5>
+                    <p class="card-text">Email reminders sent to your registered email address.</p>
+                    <div id="email-status" class="mb-3">
+                        <span class="badge bg-secondary">Checking...</span>
+                    </div>
+                    <div id="email-config" style="display: none;">
+                        <div class="alert alert-info">
+                            <small>
+                                <strong>Setup Required:</strong> To enable email notifications, configure SendGrid API key in your environment settings.
+                                <br><br>
+                                <strong>Required Environment Variables:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li><code>SENDGRID_API_KEY</code> - Your SendGrid API key</li>
+                                    <li><code>FROM_EMAIL</code> - Sender email address</li>
+                                    <li><code>USER_EMAIL</code> - Your email address for notifications</li>
+                                </ul>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Reminders -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock"></i> Active Reminders
+                        <span id="reminder-count" class="badge bg-primary ms-2">0</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="reminders-list">
+                        <div class="text-center text-muted">
+                            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                            Loading reminders...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Notifications -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history"></i> Recent Notifications
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="recent-notifications">
+                        <div class="text-center text-muted">
+                            No recent notifications
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tools"></i> Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-primary w-100 mb-2" onclick="createQuickReminder('medication')">
+                                💊 Add Medication Reminder
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-success w-100 mb-2" onclick="createQuickReminder('appointment')">
+                                🏥 Add Appointment Reminder
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-info w-100 mb-2" onclick="createQuickReminder('health_check')">
+                                📊 Add Health Check Reminder
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-warning w-100 mb-2" onclick="window.location.href='/reminders'">
+                                🔧 Manage All Reminders
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Reminder Modal -->
+<div class="modal fade" id="quickReminderModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Quick Reminder</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="quickReminderForm">
+                    <div class="mb-3">
+                        <label class="form-label">Reminder Type</label>
+                        <select class="form-select" id="reminderType" required>
+                            <option value="medication">Medication</option>
+                            <option value="appointment">Appointment</option>
+                            <option value="health_check">Health Check</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control" id="reminderTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-control" id="reminderMessage" rows="3" required></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Date</label>
+                                <input type="date" class="form-control" id="reminderDate" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Time</label>
+                                <input type="time" class="form-control" id="reminderTime" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Repeat</label>
+                        <select class="form-select" id="reminderRepeat">
+                            <option value="once">Once</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveQuickReminder()">
+                    <i class="fas fa-save"></i> Save Reminder
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Notification settings management
+let notificationStatus = {};
+
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadNotificationStatus();
+    await loadActiveReminders();
+    checkBrowserPermissions();
+});
+
+async function loadNotificationStatus() {
+    try {
+        const response = await fetch('/api/notifications/settings');
+        if (response.ok) {
+            notificationStatus = await response.json();
+            updateStatusDisplay();
+        }
+    } catch (error) {
+        console.error('Error loading notification status:', error);
+    }
+}
+
+function updateStatusDisplay() {
+    // Update push notification status
+    const pushStatus = document.getElementById('push-status');
+    const enablePushBtn = document.getElementById('enable-push-btn');
+    const pushEnabled = document.getElementById('push-enabled');
+    
+    if (notificationManager && notificationManager.permission === 'granted') {
+        pushStatus.innerHTML = '<span class="badge bg-success">Enabled</span>';
+        enablePushBtn.style.display = 'none';
+        pushEnabled.style.display = 'block';
+    } else {
+        pushStatus.innerHTML = '<span class="badge bg-warning">Disabled</span>';
+        enablePushBtn.style.display = 'block';
+        pushEnabled.style.display = 'none';
+    }
+    
+    // Update email notification status
+    const emailStatus = document.getElementById('email-status');
+    const emailConfig = document.getElementById('email-config');
+    
+    if (notificationStatus.email_enabled) {
+        emailStatus.innerHTML = '<span class="badge bg-success">Enabled</span>';
+        emailConfig.style.display = 'none';
+    } else {
+        emailStatus.innerHTML = '<span class="badge bg-warning">Not Configured</span>';
+        emailConfig.style.display = 'block';
+    }
+}
+
+function checkBrowserPermissions() {
+    // This will be called after notificationManager is initialized
+    setTimeout(() => {
+        if (notificationManager) {
+            updateStatusDisplay();
+        }
+    }, 1000);
+}
+
+async function enablePushNotifications() {
+    if (notificationManager) {
+        await notificationManager.requestPermission();
+        updateStatusDisplay();
+    }
+}
+
+async function testNotifications() {
+    try {
+        // Show loading state
+        const button = event.target;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
+        button.disabled = true;
+        
+        const response = await fetch('/api/notifications/test', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (response.ok) {
+            // Check for notifications after a short delay
+            setTimeout(() => {
+                if (notificationManager) {
+                    notificationManager.checkPendingNotifications();
+                }
+            }, 1000);
+            
+            // Show success message
+            showAlert('Test notification sent successfully!', 'success');
+        } else {
+            showAlert('Failed to send test notification', 'danger');
+        }
+        
+        // Restore button
+        button.innerHTML = originalText;
+        button.disabled = false;
+        
+    } catch (error) {
+        console.error('Error sending test notification:', error);
+        showAlert('Error sending test notification', 'danger');
+    }
+}
+
+async function loadActiveReminders() {
+    try {
+        const response = await fetch('/api/reminders?is_active=true');
+        if (response.ok) {
+            const reminders = await response.json();
+            displayActiveReminders(reminders);
+        }
+    } catch (error) {
+        console.error('Error loading reminders:', error);
+        document.getElementById('reminders-list').innerHTML = 
+            '<div class="text-danger">Error loading reminders</div>';
+    }
+}
+
+function displayActiveReminders(reminders) {
+    const container = document.getElementById('reminders-list');
+    const countBadge = document.getElementById('reminder-count');
+    
+    countBadge.textContent = reminders.length;
+    
+    if (reminders.length === 0) {
+        container.innerHTML = '<div class="text-muted">No active reminders</div>';
+        return;
+    }
+    
+    const html = reminders.map(reminder => {
+        const reminderTime = new Date(reminder.reminder_time);
+        const icon = getTypeIcon(reminder.reminder_type);
+        const timeStr = reminderTime.toLocaleString();
+        
+        return `
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <div>
+                    <strong>${icon} ${reminder.title}</strong>
+                    <br>
+                    <small class="text-muted">${timeStr}</small>
+                </div>
+                <div>
+                    <span class="badge bg-${getTypeBadgeColor(reminder.reminder_type)}">${reminder.reminder_type.replace('_', ' ')}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    container.innerHTML = html;
+}
+
+function getTypeIcon(type) {
+    const icons = {
+        'medication': '💊',
+        'appointment': '🏥',
+        'health_check': '📊'
+    };
+    return icons[type] || '🔔';
+}
+
+function getTypeBadgeColor(type) {
+    const colors = {
+        'medication': 'primary',
+        'appointment': 'success',
+        'health_check': 'info'
+    };
+    return colors[type] || 'secondary';
+}
+
+function createQuickReminder(type) {
+    // Set default values
+    document.getElementById('reminderType').value = type;
+    
+    // Set default date to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('reminderDate').value = tomorrow.toISOString().split('T')[0];
+    
+    // Set default time
+    document.getElementById('reminderTime').value = '09:00';
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('quickReminderModal'));
+    modal.show();
+}
+
+async function saveQuickReminder() {
+    const form = document.getElementById('quickReminderForm');
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    const reminderData = {
+        reminder_type: document.getElementById('reminderType').value,
+        title: document.getElementById('reminderTitle').value,
+        message: document.getElementById('reminderMessage').value,
+        reminder_time: document.getElementById('reminderDate').value + 'T' + document.getElementById('reminderTime').value + ':00',
+        repeat_interval: document.getElementById('reminderRepeat').value,
+        is_active: true,
+        notification_method: 'app'
+    };
+    
+    try {
+        const response = await fetch('/api/reminders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(reminderData)
+        });
+        
+        if (response.ok) {
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('quickReminderModal'));
+            modal.hide();
+            
+            // Reset form
+            form.reset();
+            
+            // Reload reminders
+            await loadActiveReminders();
+            
+            showAlert('Reminder created successfully!', 'success');
+        } else {
+            const error = await response.json();
+            showAlert('Error creating reminder: ' + (error.message || 'Unknown error'), 'danger');
+        }
+    } catch (error) {
+        console.error('Error saving reminder:', error);
+        showAlert('Error saving reminder', 'danger');
+    }
+}
+
+function showAlert(message, type) {
+    const alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    const container = document.querySelector('.container');
+    container.insertAdjacentHTML('afterbegin', alertHtml);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        const alert = container.querySelector('.alert');
+        if (alert) {
+            const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+            bsAlert.close();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}

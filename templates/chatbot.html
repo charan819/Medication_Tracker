@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}Health Assistant Chatbot{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">
+                        <i class="fas fa-robot me-2 text-primary"></i>Health Assistant
+                    </h2>
+                    <p class="text-muted mb-0">Powered by ChatGPT - Ask me about health management, medications, and wellness tips</p>
+                </div>
+                <div>
+                    <button id="clearChatBtn" class="btn btn-outline-secondary btn-sm me-2">
+                        <i class="fas fa-trash me-1"></i>Clear Chat
+                    </button>
+                    <span id="chatbotStatus" class="badge bg-secondary">
+                        <i class="fas fa-circle-notch fa-spin me-1"></i>Checking...
+                    </span>
+                </div>
+            </div>
+
+            <!-- Service Status Alert -->
+            <div id="serviceAlert" class="alert alert-warning d-none" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Service Unavailable:</strong> ChatGPT service is not configured. Please check API key settings.
+            </div>
+
+            <!-- Quick Tips -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body py-3">
+                            <h6 class="card-title mb-2">
+                                <i class="fas fa-lightbulb me-2 text-warning"></i>Quick Health Tips
+                            </h6>
+                            <div class="row g-2">
+                                <div class="col-md-2">
+                                    <button class="btn btn-outline-primary btn-sm w-100 health-tip-btn" data-category="general">
+                                        <i class="fas fa-heart me-1"></i>General
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-outline-success btn-sm w-100 health-tip-btn" data-category="medication">
+                                        <i class="fas fa-pills me-1"></i>Medication
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-outline-info btn-sm w-100 health-tip-btn" data-category="exercise">
+                                        <i class="fas fa-running me-1"></i>Exercise
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-outline-warning btn-sm w-100 health-tip-btn" data-category="nutrition">
+                                        <i class="fas fa-apple-alt me-1"></i>Nutrition
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-outline-secondary btn-sm w-100 health-tip-btn" data-category="sleep">
+                                        <i class="fas fa-moon me-1"></i>Sleep
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-outline-danger btn-sm w-100 health-tip-btn" data-category="stress">
+                                        <i class="fas fa-spa me-1"></i>Stress
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Container -->
+            <div class="card border-0 shadow-sm" style="height: 60vh;">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-comments me-2"></i>Chat with your Health Assistant
+                    </h5>
+                </div>
+                
+                <!-- Chat Messages -->
+                <div id="chatMessages" class="card-body p-0 overflow-auto" style="height: calc(60vh - 140px);">
+                    <div class="p-4">
+                        <div class="message assistant-message">
+                            <div class="d-flex align-items-start">
+                                <div class="avatar bg-primary text-white me-3">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="message-content">
+                                    <div class="message-bubble bg-light">
+                                        <p class="mb-0">Hello! I'm your AI health assistant. I can help you with:</p>
+                                        <ul class="mb-0 mt-2">
+                                            <li>General health and wellness questions</li>
+                                            <li>Medication management tips</li>
+                                            <li>Understanding your health metrics</li>
+                                            <li>Appointment and reminder guidance</li>
+                                            <li>Healthy lifestyle suggestions</li>
+                                        </ul>
+                                        <small class="text-muted mt-2 d-block">
+                                            <em>Please remember: I provide general information only. Always consult healthcare professionals for medical advice.</em>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="card-footer bg-white border-top">
+                    <form id="chatForm" class="d-flex gap-2">
+                        <div class="flex-grow-1">
+                            <input type="text" 
+                                   id="messageInput" 
+                                   class="form-control" 
+                                   placeholder="Ask me about your health, medications, or wellness tips..." 
+                                   maxlength="500"
+                                   disabled>
+                        </div>
+                        <button type="submit" 
+                                id="sendBtn" 
+                                class="btn btn-primary" 
+                                disabled>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Powered by ChatGPT-4o | 
+                            <span id="tokenUsage" class="d-none">Tokens used: <span id="tokenCount">0</span></span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.message {
+    margin-bottom: 1.5rem;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.message-bubble {
+    padding: 0.75rem 1rem;
+    border-radius: 1rem;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+.user-message .message-bubble {
+    background-color: var(--bs-primary);
+    color: white;
+    margin-left: auto;
+}
+
+.assistant-message .message-bubble {
+    background-color: var(--bs-light);
+    border: 1px solid var(--bs-border-color);
+}
+
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--bs-secondary);
+}
+
+.typing-indicator .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--bs-secondary);
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-indicator .dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-indicator .dot:nth-child(2) { animation-delay: -0.16s; }
+.typing-indicator .dot:nth-child(3) { animation-delay: 0s; }
+
+@keyframes typing {
+    0%, 80%, 100% { 
+        transform: scale(0);
+        opacity: 0.5;
+    }
+    40% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+#chatMessages {
+    scroll-behavior: smooth;
+}
+
+.health-tip-btn {
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .card {
+        height: 70vh !important;
+    }
+    
+    #chatMessages {
+        height: calc(70vh - 140px) !important;
+    }
+    
+    .health-tip-btn {
+        margin-bottom: 0.25rem;
+    }
+}
+</style>
+
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+{% endblock %}

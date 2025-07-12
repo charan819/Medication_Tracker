@@ -1,0 +1,59 @@
+# Virtual environment
+.venv/
+venv/
+ENV/
+env/
+*.pyc
+__pycache__/
+
+# IDE & OS files
+.idea/
+.vscode/
+*.DS_Store
+*.swp
+*.swo
+*.bak
+*.log
+
+# Python bytecode
+*.py[cod]
+__pycache__/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Environment files
+.env
+.env.*
+
+# SQLite DB (if not needed in source control)
+instance/*.db
+*.sqlite3
+
+# Migrations (optional: if auto-generated and should not be tracked)
+migrations/versions/
+
+# Dependency Lock (optional for reproducibility, keep if needed)
+*.lock
+
+# Replit-specific
+.replit
+.replit.md
+
+# Docker stuff (if local volumes or builds)
+**/__pycache__/
+*.pid
+*.seed
+*.db
+
+# Ignore attached screenshots or assets
+attached_assets/
+
+# Ignore coverage reports or pytest cache
+htmlcov/
+.tox/
+.coverage
+.pytest_cache/
+
+# Ignore compiled C extensions
+*.so

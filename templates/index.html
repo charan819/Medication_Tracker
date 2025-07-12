@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Health Management App{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="mb-4">Welcome to Your Health Dashboard</h1>
+        <p class="lead">Track your medications, monitor health metrics, manage appointments, and set reminders all in one place.</p>
+    </div>
+</div>
+
+<!-- Dashboard Statistics -->
+<div class="row mb-5">
+    <div class="col-md-3 mb-3">
+        <div class="card summary-card bg-primary bg-opacity-25 h-100">
+            <div class="card-body text-center">
+                <div class="card-icon text-primary">
+                    <i class="fas fa-pills"></i>
+                </div>
+                <h5 class="card-title">Medications</h5>
+                <h2 class="mb-0"><span id="medication-count">...</span></h2>
+                <p class="card-text">Active Medications</p>
+            </div>
+            <div class="card-footer bg-transparent border-0 text-center">
+                <a href="{{ url_for('medications') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card summary-card bg-success bg-opacity-25 h-100">
+            <div class="card-body text-center">
+                <div class="card-icon text-success">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h5 class="card-title">Health Metrics</h5>
+                <h2 class="mb-0"><span id="metric-count">...</span></h2>
+                <p class="card-text">Recent Recordings</p>
+            </div>
+            <div class="card-footer bg-transparent border-0 text-center">
+                <a href="{{ url_for('health_metrics') }}" class="btn btn-sm btn-outline-success">View All</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card summary-card bg-warning bg-opacity-25 h-100">
+            <div class="card-body text-center">
+                <div class="card-icon text-warning">
+                    <i class="far fa-calendar-alt"></i>
+                </div>
+                <h5 class="card-title">Appointments</h5>
+                <h2 class="mb-0"><span id="appointment-count">...</span></h2>
+                <p class="card-text">Upcoming Appointments</p>
+            </div>
+            <div class="card-footer bg-transparent border-0 text-center">
+                <a href="{{ url_for('appointments') }}" class="btn btn-sm btn-outline-warning">View All</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card summary-card bg-info bg-opacity-25 h-100">
+            <div class="card-body text-center">
+                <div class="card-icon text-info">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h5 class="card-title">Reminders</h5>
+                <h2 class="mb-0"><span id="reminder-count">...</span></h2>
+                <p class="card-text">Active Reminders</p>
+            </div>
+            <div class="card-footer bg-transparent border-0 text-center">
+                <a href="{{ url_for('reminders') }}" class="btn btn-sm btn-outline-info">View All</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Upcoming Medications -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Today's Medications</h5>
+                <a href="{{ url_for('medications') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="loader text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="medication-list" class="list-group">
+                    <!-- Medications will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Appointments -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Upcoming Appointments</h5>
+                <a href="{{ url_for('appointments') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="loader text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="appointment-list" class="list-group">
+                    <!-- Appointments will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Health Metrics -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Recent Health Metrics</h5>
+                <a href="{{ url_for('health_metrics') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="loader text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="metric-list">
+                    <!-- Health metrics will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Reminders -->
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Active Reminders</h5>
+                <a href="{{ url_for('reminders') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="loader text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="reminder-list" class="list-group">
+                    <!-- Reminders will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        // Load dashboard data
+        await loadDashboardData();
+    });
+
+    async function loadDashboardData() {
+        try {
+            // Load medications
+            const medications = await fetchMedications();
+            document.getElementById('medication-count').textContent = medications.length;
+            
+            // Display today's medications
+            const medicationListEl = document.getElementById('medication-list');
+            if (medications.length > 0) {
+                let medicationHTML = '';
+                const today = new Date().toISOString().split('T')[0]; // Today's date in YYYY-MM-DD format
+                
+                medications.forEach(med => {
+                    medicationHTML += `
+                        <a href="/medications/${med.id}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="medication-status status-${med.status || 'active'}"></span>
+                                <strong>${med.name}</strong> - ${med.dosage}
+                                <small class="d-block text-muted">${med.intake_time}</small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">${med.frequency}</span>
+                        </a>
+                    `;
+                });
+                
+                medicationListEl.innerHTML = medicationHTML;
+            } else {
+                medicationListEl.innerHTML = '<div class="text-center p-3">No medications found</div>';
+            }
+            
+            // Load health metrics
+            const healthMetrics = await fetchHealthMetrics();
+            document.getElementById('metric-count').textContent = healthMetrics.length;
+            
+            // Display recent health metrics
+            const metricListEl = document.getElementById('metric-list');
+            if (healthMetrics.length > 0) {
+                let metricHTML = '<div class="row">';
+                
+                // Take only the 4 most recent metrics
+                const recentMetrics = healthMetrics.slice(0, 4);
+                
+                recentMetrics.forEach(metric => {
+                    let metricTypeClass = '';
+                    let valueDisplay = '';
+                    
+                    // Customize display based on metric type
+                    switch(metric.metric_type) {
+                        case 'blood_pressure':
+                            metricTypeClass = 'blood-pressure';
+                            valueDisplay = `${metric.systolic}/${metric.diastolic}`;
+                            break;
+                        case 'glucose':
+                            metricTypeClass = 'glucose';
+                            valueDisplay = metric.value;
+                            break;
+                        case 'weight':
+                            metricTypeClass = 'weight';
+                            valueDisplay = metric.value;
+                            break;
+                        case 'heart_rate':
+                            metricTypeClass = 'heart-rate';
+                            valueDisplay = metric.value;
+                            break;
+                        default:
+                            valueDisplay = metric.value;
+                    }
+                    
+                    metricHTML += `
+                        <div class="col-md-6 mb-3">
+                            <div class="card metric-card ${metricTypeClass}">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">${metric.metric_type.replace('_', ' ').toUpperCase()}</h6>
+                                    <div class="metric-value">${valueDisplay} <span class="metric-unit">${metric.unit}</span></div>
+                                    <small class="text-muted">${formatDate(metric.recorded_at)}</small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                metricHTML += '</div>';
+                metricListEl.innerHTML = metricHTML;
+            } else {
+                metricListEl.innerHTML = '<div class="text-center p-3">No health metrics found</div>';
+            }
+            
+            // Load appointments
+            const appointments = await fetchAppointments({status: 'scheduled'});
+            document.getElementById('appointment-count').textContent = appointments.length;
+            
+            // Display upcoming appointments
+            const appointmentListEl = document.getElementById('appointment-list');
+            if (appointments.length > 0) {
+                let appointmentHTML = '';
+                
+                // Sort by date
+                appointments.sort((a, b) => new Date(a.date) - new Date(b.date));
+                
+                // Take only the 5 next appointments
+                const upcomingAppointments = appointments.slice(0, 5);
+                
+                upcomingAppointments.forEach(appt => {
+                    appointmentHTML += `
+                        <a href="/appointments/${appt.id}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">${appt.title}</h6>
+                                <small class="status-${appt.status}">${appt.status}</small>
+                            </div>
+                            <p class="mb-1">${appt.doctor_name || ''} ${appt.hospital_name ? '- ' + appt.hospital_name : ''}</p>
+                            <small class="text-muted">
+                                <i class="far fa-calendar-alt"></i> ${formatDate(appt.date)} 
+                                <i class="far fa-clock ml-2"></i> ${formatTime(appt.time)}
+                            </small>
+                        </a>
+                    `;
+                });
+                
+                appointmentListEl.innerHTML = appointmentHTML;
+            } else {
+                appointmentListEl.innerHTML = '<div class="text-center p-3">No upcoming appointments</div>';
+            }
+            
+            // Load reminders
+            const reminders = await fetchReminders({is_active: true});
+            document.getElementById('reminder-count').textContent = reminders.length;
+            
+            // Display active reminders
+            const reminderListEl = document.getElementById('reminder-list');
+            if (reminders.length > 0) {
+                let reminderHTML = '';
+                
+                // Sort by reminder time
+                reminders.sort((a, b) => new Date(a.reminder_time) - new Date(b.reminder_time));
+                
+                // Take only the 5 next reminders
+                const upcomingReminders = reminders.slice(0, 5);
+                
+                upcomingReminders.forEach(reminder => {
+                    let iconClass = 'fa-bell';
+                    switch(reminder.reminder_type) {
+                        case 'medication':
+                            iconClass = 'fa-pills';
+                            break;
+                        case 'appointment':
+                            iconClass = 'fa-calendar-alt';
+                            break;
+                        case 'health_check':
+                            iconClass = 'fa-heartbeat';
+                            break;
+                    }
+                    
+                    reminderHTML += `
+                        <a href="/reminders/${reminder.id}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1"><i class="fas ${iconClass} me-2"></i> ${reminder.title}</h6>
+                                <small>${reminder.repeat_interval}</small>
+                            </div>
+                            <p class="mb-1">${reminder.message}</p>
+                            <small class="text-muted">
+                                <i class="far fa-clock"></i> ${formatDate(reminder.reminder_time)} ${formatTime(reminder.reminder_time)}
+                            </small>
+                        </a>
+                    `;
+                });
+                
+                reminderListEl.innerHTML = reminderHTML;
+            } else {
+                reminderListEl.innerHTML = '<div class="text-center p-3">No active reminders</div>';
+            }
+        } catch (error) {
+            console.error('Error loading dashboard data:', error);
+            showAlert('Error loading dashboard data. Please try again later.', 'danger');
+        }
+    }
+</script>
+{% endblock %}

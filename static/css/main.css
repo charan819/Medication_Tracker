@@ -1,0 +1,213 @@
+/* Custom CSS for Health Management App */
+
+/* General Styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+}
+
+footer {
+    margin-top: auto;
+}
+
+/* Card styles */
+.card {
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: rgba(0, 0, 0, 0.03);
+    font-weight: 500;
+}
+
+/* Dashboard Summary Cards */
+.summary-card {
+    transition: transform 0.3s ease;
+    border: none;
+}
+
+.summary-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Medication status indicators */
+.medication-status {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.status-active {
+    background-color: var(--bs-success);
+}
+
+.status-inactive {
+    background-color: var(--bs-warning);
+}
+
+.status-discontinued {
+    background-color: var(--bs-danger);
+}
+
+/* Health metrics cards */
+.metric-card {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    height: 100%;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.metric-unit {
+    font-size: 1rem;
+    font-weight: normal;
+    color: var(--bs-body-color);
+    opacity: 0.8;
+}
+
+/* Health metric types */
+.blood-pressure {
+    border-left: 4px solid var(--bs-danger);
+}
+
+.glucose {
+    border-left: 4px solid var(--bs-warning);
+}
+
+.weight {
+    border-left: 4px solid var(--bs-info);
+}
+
+.heart-rate {
+    border-left: 4px solid var(--bs-success);
+}
+
+/* Loaders */
+.loader {
+    display: none;
+    padding: 2rem 0;
+}
+
+/* Timeline for medication logs */
+.timeline {
+    position: relative;
+    padding: 1rem 0;
+}
+
+.timeline-item {
+    position: relative;
+    padding: 1rem 0 1rem 1.5rem;
+    border-left: 2px solid var(--bs-primary);
+    margin-bottom: 1rem;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    top: 1.25rem;
+    left: -0.5rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    background-color: var(--bs-primary);
+}
+
+/* Alert container for dynamic alerts */
+#alert-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+/* Chat Widget Text Improvements */
+.chat-window .message-bubble-sm {
+    color: #212529 !important; /* Dark text for better readability */
+}
+
+.assistant-message-widget .message-bubble-sm {
+    background-color: white !important;
+    border: 1px solid var(--bs-border-color) !important;
+    color: #212529 !important; /* Force dark text */
+}
+
+.user-message-widget .message-bubble-sm {
+    background-color: var(--bs-primary) !important;
+    color: white !important;
+}
+
+.welcome-message .message-bubble-sm {
+    color: #212529 !important; /* Dark text for welcome message */
+}
+
+.chat-body .small.text-muted {
+    color: #6c757d !important; /* Proper muted text color */
+}
+
+/* Chat widget body text */
+.chat-body {
+    color: #212529 !important;
+}
+
+.chat-body p, .chat-body span, .chat-body div {
+    color: inherit !important;
+}
+
+/* Main chatbot page text improvements */
+.message-content {
+    color: #212529 !important;
+}
+
+.message-content p, .message-content span, .message-content div {
+    color: #212529 !important;
+}
+
+.assistant-message .card {
+    color: #212529 !important;
+}
+
+.assistant-message .card-body {
+    color: #212529 !important;
+}
+
+/* Chat messages container */
+#chatMessages .card-body {
+    color: #212529 !important;
+}
+
+#chatMessages .message {
+    color: #212529 !important;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .card-icon {
+        font-size: 2rem;
+    }
+    
+    .metric-value {
+        font-size: 1.25rem;
+    }
+}
